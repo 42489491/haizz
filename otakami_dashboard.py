@@ -150,7 +150,7 @@ def _parse_pct(val):
         return np.nan
 
 
-def _read_excel_any(local_path: Path, remote_url: str = "", sheet_name=None):
+def _read_excel_any(local_path: Path, remote_url: str = "", sheet_name=0):
     """Read Excel from URL first (if provided), fallback to local path."""
     if remote_url:
         try:
