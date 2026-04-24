@@ -873,14 +873,15 @@ def page_product(df):
         st.markdown("#### Cluster Profile")
         cluster_profile = prod_cluster.groupby("cluster")[features].mean().round(2)
         cluster_profile.columns = ["Avg Revenue", "Avg Orders", "AOV", "Cancel Rate", "Avg Qty", "Discount %"]
-        st.dataframe(cluster_profile.style.format({
-            "Avg Revenue": "{:,.0f}",
-            "Avg Orders": "{:,.0f}",
-            "AOV": "{:,.0f}",
-            "Cancel Rate": "{:.2%}",
-            "Avg Qty": "{:.1f}",
-            "Discount %": "{:.2%}",
-        }).background_gradient(cmap="YlOrRd", axis=0), width="stretch")
+        # Avoid pandas Styler optional dependency issues on cloud runtime.
+        cluster_profile_show = cluster_profile.copy()
+        cluster_profile_show["Avg Revenue"] = cluster_profile_show["Avg Revenue"].map(lambda x: f"{x:,.0f}")
+        cluster_profile_show["Avg Orders"] = cluster_profile_show["Avg Orders"].map(lambda x: f"{x:,.0f}")
+        cluster_profile_show["AOV"] = cluster_profile_show["AOV"].map(lambda x: f"{x:,.0f}")
+        cluster_profile_show["Cancel Rate"] = cluster_profile_show["Cancel Rate"].map(lambda x: f"{x:.2%}")
+        cluster_profile_show["Avg Qty"] = cluster_profile_show["Avg Qty"].map(lambda x: f"{x:.1f}")
+        cluster_profile_show["Discount %"] = cluster_profile_show["Discount %"].map(lambda x: f"{x:.2%}")
+        st.dataframe(cluster_profile_show, width="stretch")
     else:
         st.info("Not enough products to run K-Means Clustering.")
 
